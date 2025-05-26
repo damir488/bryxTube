@@ -1,0 +1,165 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Брухтуб</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        margin: 0;
+        padding: 0;
+    }
+    header {
+        background-color: #ff0000;
+        padding: 15px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    header h1 {
+        margin: 0;
+        font-size: 24px;
+    }
+    #addVideoBtn {
+        background-color: white;
+        color: #ff0000;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    #videoContainer {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px;
+        justify-content: center;
+    }
+    .video {
+        background: white;
+        margin: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        width: 300px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .video iframe {
+        width: 100%;
+        height: 170px;
+    }
+    .video h3 {
+        margin: 10px;
+        font-size: 16px;
+    }
+    #popupOverlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+    #popup {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        max-width: 90%;
+    }
+    #popup input {
+        width: 100%;
+        padding: 8px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+    #popup button {
+        padding: 8px 12px;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Брухтуб</h1>
+    <button id="addVideoBtn">Добавить видео</button>
+</header>
+
+<div id="videoContainer">
+    <!-- Пример видео -->
+    <div class="video">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+        <h3>Пример видео 1</h3>
+    </div>
+    <div class="video">
+        <iframe src="https://www.youtube.com/embed/5NV6Rdv1a3I" frameborder="0" allowfullscreen></iframe>
+        <h3>Пример видео 2</h3>
+    </div>
+</div>
+
+<!-- Окно добавления видео -->
+<div id="popupOverlay">
+    <div id="popup">
+        <h2>Добавить новое видео</h2>
+        <input type="text" id="videoURL" placeholder="Введите ссылку YouTube" />
+        <input type="text" id="videoTitle" placeholder="Название видео" />
+        <button id="addVideoConfirm">Добавить</button>
+        <button id="closePopup" style="background-color:#555; margin-left:10px;">Отмена</button>
+    </div>
+</div>
+
+<script>
+    const addBtn = document.getElementById('addVideoBtn');
+    const overlay = document.getElementById('popupOverlay');
+    const closeBtn = document.getElementById('closePopup');
+    const confirmBtn = document.getElementById('addVideoConfirm') ;
+    const videoContainer = document.getElementById('videoContainer');
+
+    addBtn.onclick = () => {
+        overlay.style.display = 'flex';
+    };
+
+    closeBtn.onclick = () => {
+        overlay.style.display = 'none';
+    };
+
+    confirmBtn.onclick = () => {
+        const url = document.getElementById('videoURL').value.trim();
+        const title = document.getElementById('videoTitle').value.trim();
+        if (url && title) {
+            // Вытаскиваем видео ID из ссылки
+            const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            if (videoIdMatch) {
+                const videoId = videoIdMatch[1];
+                const iframeSrc = `https://www.youtube.com/embed/${videoId}`;
+                // Создаем элемент видео
+                const newVideoDiv = document.createElement('div');
+                newVideoDiv.className = 'video';
+                newVideoDiv.innerHTML = `<iframe src="${iframeSrc}" frameborder="0" allowfullscreen></iframe>
+                                         <h3>${title}</h3>`;
+                videoContainer.appendChild(newVideoDiv);
+                // Закрываем окно
+                overlay.style.display = 'none';
+                // Очищаем поля
+                document.getElementById('videoURL').value = '';
+                document.getElementById('videoTitle').value = '';
+            } else {
+                alert('Некорректная ссылка на YouTube');
+            }
+        } else {
+            alert('Пожалуйста, заполните все поля');
+        }
+    };
+</script>
+
+</body>
+</html>
